@@ -1,4 +1,4 @@
-# LeadTime — processing-time & delivery-promise forecasting for an e-commerce fulfillment network
+# LeadTime: Processing-time & delivery-promise forecasting for an e-commerce fulfillment network
 
 [![ci](https://github.com/maxxrichard/LeadTime/actions/workflows/ci.yml/badge.svg)](https://github.com/maxxrichard/LeadTime/actions/workflows/ci.yml)
 ![python](https://img.shields.io/badge/python-3.10%20%7C%203.12-blue)
