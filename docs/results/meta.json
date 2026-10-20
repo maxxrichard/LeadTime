@@ -1,0 +1,15 @@
+{
+  "backend": "lightgbm",
+  "quantiles": [
+    0.1,
+    0.5,
+    0.8,
+    0.9
+  ],
+  "n_orders": 39105,
+  "folds": 6,
+  "horizon_days": 30,
+  "label_gap_days": 21,
+  "train_seconds": 441.0,
+  "features": 46
+}

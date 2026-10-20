@@ -1,0 +1,68 @@
+# Databricks Asset Bundle: deploy with `databricks bundle deploy -t dev` and run with
+# `databricks bundle run leadtime_pipeline -t dev`.
+bundle:
+  name: leadtime
+
+variables:
+  lake_root:
+    description: Root path for the medallion Delta tables
+    default: /Volumes/main/leadtime/lake
+  raw_dir:
+    description: Folder holding the Olist CSVs
+    default: /Volumes/main/leadtime/raw
+
+targets:
+  dev:
+    mode: development
+    default: true
+  prod:
+    mode: production
+
+resources:
+  jobs:
+    leadtime_pipeline:
+      name: "[${bundle.target}] leadtime pipeline"
+      schedule:
+        quartz_cron_expression: "0 0 3 * * ?"   # daily 03:00 UTC
+        timezone_id: UTC
+        pause_status: PAUSED
+      job_clusters:
+        - job_cluster_key: leadtime_cluster
+          new_cluster:
+            spark_version: 15.4.x-cpu-ml-scala2.12
+            node_type_id: i3.xlarge
+            num_workers: 2
+            spark_env_vars:
+              LEADTIME_LAKE_ROOT: ${var.lake_root}
+              LEADTIME_RAW_DIR: ${var.raw_dir}
+              LEADTIME_MLFLOW_EXPERIMENT: /Shared/leadtime
+      tasks:
+        - task_key: ingest
+          job_cluster_key: leadtime_cluster
+          spark_python_task: { python_file: ../pipelines/01_ingest.py }
+          libraries: [{ whl: ../dist/*.whl }]
+        - task_key: silver_orders
+          depends_on: [{ task_key: ingest }]
+          job_cluster_key: leadtime_cluster
+          spark_python_task: { python_file: ../pipelines/02_silver_orders.py }
+          libraries: [{ whl: ../dist/*.whl }]
+        - task_key: gold_features
+          depends_on: [{ task_key: silver_orders }]
+          job_cluster_key: leadtime_cluster
+          spark_python_task: { python_file: ../pipelines/03_gold_features.py }
+          libraries: [{ whl: ../dist/*.whl }]
+        - task_key: train
+          depends_on: [{ task_key: gold_features }]
+          job_cluster_key: leadtime_cluster
+          spark_python_task: { python_file: ../pipelines/04_train.py }
+          libraries: [{ whl: ../dist/*.whl }]
+        - task_key: evaluate
+          depends_on: [{ task_key: gold_features }]
+          job_cluster_key: leadtime_cluster
+          spark_python_task: { python_file: ../pipelines/05_evaluate.py }
+          libraries: [{ whl: ../dist/*.whl }]
+        - task_key: monitor
+          depends_on: [{ task_key: train }, { task_key: evaluate }]
+          job_cluster_key: leadtime_cluster
+          spark_python_task: { python_file: ../pipelines/06_monitor.py }
+          libraries: [{ whl: ../dist/*.whl }]

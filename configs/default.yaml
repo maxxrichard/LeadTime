@@ -1,0 +1,48 @@
+# LeadTime default configuration. Override with `leadtime --config my.yaml ...`.
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  n_synthetic_orders: 40000
+  seed: 42
+  max_total_days: 90
+
+model:
+  backend: lightgbm          # lightgbm | xgboost
+  quantiles: [0.1, 0.5, 0.8, 0.9]
+  min_segment_rows: 2000
+  log_target: true
+  params:
+    n_estimators: 400
+    learning_rate: 0.05
+    num_leaves: 31
+    min_child_samples: 40
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    verbose: -1
+
+backtest:
+  n_folds: 6
+  horizon_days: 30
+  step_days: 30
+  min_train_days: 180
+  label_gap_days: 21        # drop right-censored labels purchased just before each cutoff
+
+promise:
+  quantile: 0.8
+  buffer_days: 0.0
+  round_up: true
+
+ab:
+  seed: 7
+  n_bootstrap: 1000
+  alpha: 0.05
+  power: 0.8
+  match_lead_time: true
+  match_mode: quantile     # tune the quantile level (or a constant buffer) to control's mean lead time
+
+monitoring:
+  psi_warn: 0.1
+  psi_alert: 0.25
+  coverage_tolerance: 0.05

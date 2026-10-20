@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Data & artifacts (regenerate with `make prototype`)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+models/
+mlruns/
+mlartifacts/
+lake/
+reports/*.parquet
+reports/*.csv
+
+# Notebooks / IDE / OS
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
+reports/*
+!reports/.gitkeep

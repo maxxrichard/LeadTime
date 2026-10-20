@@ -1,0 +1,19 @@
+{
+  "control": "carrier_estimate",
+  "treatment": "model_p80",
+  "n_control": 7547,
+  "n_treatment": 7418,
+  "late_rate_control": 0.33337750099377234,
+  "late_rate_treatment": 0.3116743057427878,
+  "abs_diff": -0.02170319525098452,
+  "rel_lift": -0.06510095968170913,
+  "rel_lift_ci_low": -0.10804717548582607,
+  "rel_lift_ci_high": -0.023120577158555013,
+  "z": -2.8395810787896965,
+  "p_value": 0.00451728138022256,
+  "mean_promised_control": 8.66662581311436,
+  "mean_promised_treatment": 8.70288487462928,
+  "treatment_buffer_days": -0.0,
+  "treatment_quantile": 0.6064,
+  "required_n_per_arm": 7281
+}
